@@ -2,9 +2,14 @@
 #
 # https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
 
+# ensure php is installed with zip extension and we have git to clone repos
 composer_php:
   pkg.installed:
-    - name: php-cli
+    - pkgs:
+        - php-cli
+        - php-zip
+        - unzip
+        - git
 
 # install composer
 composer_installed:

@@ -18,4 +18,6 @@ The states are independent of their actual location in the state file tree, so y
 ## Features
 
 - Install Composer
+- FPM
 - ...
+

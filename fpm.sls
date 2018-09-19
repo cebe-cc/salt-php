@@ -29,3 +29,21 @@ php_fpm_service:
     - full_restart: True
 
 # TODO fpm config
+# TODO log rotate
+
+/etc/php/7.0/fpm/conf.d/50-custom.ini:
+  file.managed:
+    - contents: |
+        error_reporting=-1
+        log_errors=On
+        display_errors=Off
+        display_startup_errors=Off
+        error_log=/var/log/php/errors.log
+    - watch_in:
+      - service: php_fpm_service
+
+/var/log/php:
+  file.directory:
+    - mode: 0755
+    - user: www-data
+
