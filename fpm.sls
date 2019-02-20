@@ -1,15 +1,32 @@
+
+# https://packages.sury.org/php/README.txt
+{% if grains['oscodename'] == 'stretch' %}
+php_repository:
+  pkgrepo.managed:
+    - humanname: PHP Debian Repository packages.sury.org
+    - name: deb https://packages.sury.org/php/ {{ grains['oscodename'] }} main
+    - dist: {{ grains['oscodename'] }}
+    - key_url: https://packages.sury.org/php/apt.gpg
+    - file: /etc/apt/sources.list.d/php.list
+{% set php_version='7.3' %}
+{% else %}
+{% set php_version='5' %}
+{% endif %}
+
 php_fpm_packages:
   pkg:
     - installed
     - pkgs:
       {% if grains['oscodename'] == 'stretch' %}
-      - php-cli
-      - php-fpm
-      - php-curl
-      - php-intl
-      - php-mbstring
-      - php-gd
-      - php-xml
+      - php{{ php_version }}-cli
+      - php{{ php_version }}-fpm
+      - php{{ php_version }}-curl
+      - php{{ php_version }}-intl
+      - php{{ php_version }}-mbstring
+      - php{{ php_version }}-gd
+      - php{{ php_version }}-xml
+    - require:
+        - pkgrepo: php_repository
       {% else %}
       - php5-cli
       - php5-fpm
@@ -21,7 +38,7 @@ php_fpm_packages:
 php_fpm_service:
   service.running:
     {% if grains['oscodename'] == 'stretch' %}
-    - name: php7.0-fpm
+    - name: php{{ php_version }}-fpm
     {% else %}
     - name: php5-fpm
     {% endif %}
@@ -31,7 +48,7 @@ php_fpm_service:
 # TODO fpm config
 # TODO log rotate
 
-/etc/php/7.0/fpm/conf.d/50-custom.ini:
+/etc/php/{{ php_version }}/fpm/conf.d/50-custom.ini:
   file.managed:
     - contents: |
         error_reporting=-1
