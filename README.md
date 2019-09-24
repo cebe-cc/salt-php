@@ -19,6 +19,9 @@ The states are independent of their actual location in the state file tree, so y
 ## Features
 
 - Install Composer
+  - if pillar `composer-github-token` is present it will be used as github token for composer.
+    It is required to authenticate against the github API to get hight API rate limit, mainly useful
+    for running composer update on bigger projects.
 - FPM
 - ...
 

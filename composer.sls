@@ -30,3 +30,11 @@ composer_asset_plugin:
     - unless: /usr/local/bin/composer global show | grep composer-asset-plugin
     - require:
         - cmd: composer_installed
+
+{% if pillar['composer-github-token'] is defined %}
+composer_github_token:
+  cmd.run:
+    - name: composer config --global github-oauth.github.com {{ pillar['composer-github-token'] }}
+    - unless: test $(composer config --global github-oauth.github.com) = "{{ pillar['composer-github-token'] }}"
+
+{% endif %}
