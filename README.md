@@ -25,3 +25,14 @@ The states are independent of their actual location in the state file tree, so y
 - FPM
 - ...
 
+# Pillar example
+'''
+composer-github-token: xxxxx
+composer-home: '/opt/composer' # default - /root
+composer-plugins:
+  - name: "composer-asset-plugin"
+    src: "fxp/composer-asset-plugin:~1.4.4"
+  - name: "prestissimo"
+    src: "hirak/prestissimo"
+  ...  
+'''
