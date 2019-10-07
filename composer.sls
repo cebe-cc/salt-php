@@ -16,25 +16,28 @@ composer_installed:
   cmd.run:
     - name: cd /usr/local/bin && curl -sS https://getcomposer.org/installer | php && ln -sf composer.phar composer
     - env:
-      - HOME: '/root'
+       - HOME: '{{pillar.get('composer-home', '/root')}}'
     - unless: test -x /usr/local/bin/composer
     - require:
         - pkg: composer_php
 
-# install composer-asset-plugin
-composer_asset_plugin:
-  cmd.run:
-    - name: '/usr/local/bin/composer global require "fxp/composer-asset-plugin:~1.4.4"'
-    - env:
-      - HOME: '/root'
-    - unless: /usr/local/bin/composer global show | grep composer-asset-plugin
-    - require:
-        - cmd: composer_installed
+# install composer plugins
+{% for plugin in pillar.get('composer-plugins', []) %}
+composer_{{plugin.name}}:
+   cmd.run:
+       - name: '/usr/local/bin/composer global require "{{plugin.src}}"'
+       - env:
+          - HOME: '{{pillar.get('composer-home', '/root')}}'
+       - unless: /usr/local/bin/composer global show | grep {{plugin.name}}
+       - require:
+           - cmd: composer_installed
+{% endfor %}
 
 {% if pillar['composer-github-token'] is defined %}
 composer_github_token:
   cmd.run:
     - name: composer config --global github-oauth.github.com {{ pillar['composer-github-token'] }}
     - unless: test $(composer config --global github-oauth.github.com) = "{{ pillar['composer-github-token'] }}"
-
+    - require:
+        - cmd: composer_installed
 {% endif %}
