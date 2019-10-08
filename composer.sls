@@ -33,7 +33,7 @@ composer_{{plugin.name}}:
            - cmd: composer_installed
 {% endfor %}
 
-{% if pillar['composer-github-token'] is defined %}
+{% if pillar.get('composer-github-token', None) != None %}
 composer_github_token:
   cmd.run:
     - name: composer config --global github-oauth.github.com {{ pillar['composer-github-token'] }}
