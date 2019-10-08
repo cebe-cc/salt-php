@@ -2,6 +2,9 @@
 {% if grains['oscodename'] == 'buster' %}
 {% set php_version='7.3' %}
 {% elif grains['oscodename'] == 'stretch' %}
+apt_https:
+  pkg.installed:
+    -   name: 'apt-transport-https'
 # https://packages.sury.org/php/README.txt
 php_repository:
   pkgrepo.managed:
@@ -10,6 +13,8 @@ php_repository:
     - dist: {{ grains['oscodename'] }}
     - key_url: https://packages.sury.org/php/apt.gpg
     - file: /etc/apt/sources.list.d/php.list
+    - require:
+        -   pkg: apt_https
 {% set php_version='7.3' %}
 {% else %}
 {% set php_version='5' %}
