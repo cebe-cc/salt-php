@@ -11,7 +11,7 @@ composer_php:
         - unzip
         - git
 
-{% set composer_home =  pillar.get('composer-home', '/root/.config/.composer')%}
+{% set composer_home =  pillar.get('composer-home', '/root/.config/composer')%}
 
 # install composer
 composer_installed:
