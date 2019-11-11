@@ -11,12 +11,15 @@ composer_php:
         - unzip
         - git
 
+{% set composer_home =  pillar.get('composer-home', '/root/.config/composer')%}
+
 # install composer
 composer_installed:
   cmd.run:
     - name: cd /usr/local/bin && curl -sS https://getcomposer.org/installer | php && ln -sf composer.phar composer
     - env:
-       - HOME: '{{pillar.get('composer-home', '/root')}}'
+       - COMPOSER_HOME: '{{composer_home}}'
+       - COMPOSER_ALLOW_SUPERUSER: {{ pillar.get('composer-allow-superuser', 1) }}
     - unless: test -x /usr/local/bin/composer
     - require:
         - pkg: composer_php
@@ -27,7 +30,8 @@ composer_{{plugin.name}}:
    cmd.run:
        - name: '/usr/local/bin/composer global require "{{plugin.src}}"'
        - env:
-          - HOME: '{{pillar.get('composer-home', '/root')}}'
+          - COMPOSER_HOME: '{{composer_home}}'
+          - COMPOSER_ALLOW_SUPERUSER: {{pillar.get('composer-allow-superuser', 1)}}
        - unless: /usr/local/bin/composer global show | grep {{plugin.name}}
        - require:
            - cmd: composer_installed
@@ -37,6 +41,9 @@ composer_{{plugin.name}}:
 composer_github_token:
   cmd.run:
     - name: composer config --global github-oauth.github.com {{ pillar['composer-github-token'] }}
+    - env:
+        - COMPOSER_HOME: '{{composer_home}}'
+        - COMPOSER_ALLOW_SUPERUSER: {{pillar.get('composer-allow-superuser', 1)}}
     - unless: test $(composer config --global github-oauth.github.com) = "{{ pillar['composer-github-token'] }}"
     - require:
         - cmd: composer_installed
