@@ -13,6 +13,11 @@ composer_php:
 
 {% set composer_home =  pillar.get('composer-home', '/root/.config/composer')%}
 
+composer_home:
+  file.directory:
+    - name: '{{ composer_home }}'
+    - makedirs: True
+
 # install composer
 composer_installed:
   cmd.run:
@@ -23,6 +28,7 @@ composer_installed:
     - unless: test -x /usr/local/bin/composer
     - require:
         - pkg: composer_php
+        - file: composer_home
 
 # install composer plugins
 {% for plugin in pillar.get('composer-plugins', []) %}
