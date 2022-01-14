@@ -15,6 +15,7 @@ The states are independent of their actual location in the state file tree, so y
   - 8, `jessie`
   - 9, `stretch`
   - 10, `buster`
+  - 11, `bullseye`
 
 ## Features
 

@@ -1,5 +1,7 @@
 
-{% if grains['oscodename'] == 'buster' %}
+{% if grains['oscodename'] == 'bullseye' %}
+{% set php_version='7.4' %}
+{% elif grains['oscodename'] == 'buster' %}
 {% set php_version='7.3' %}
 {% elif grains['oscodename'] == 'stretch' %}
 apt_https:
