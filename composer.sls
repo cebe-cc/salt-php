@@ -6,8 +6,6 @@
 composer_php:
   pkg.installed:
     - pkgs:
-        - php-cli
-        - php-zip
         - unzip
         - git
 
