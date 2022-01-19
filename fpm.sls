@@ -24,7 +24,7 @@ apt_https:
 php_repository:
   pkgrepo.managed:
     - humanname: PHP Debian Repository packages.sury.org
-    - name: deb https://packages.sury.org/php/ {{ grains['oscodename'] }} main
+    - name: deb https://packages.sury.org/php {{ grains['oscodename'] }} main
     - dist: {{ grains['oscodename'] }}
     - key_url: https://packages.sury.org/php/apt.gpg
     - file: /etc/apt/sources.list.d/php.list
@@ -90,7 +90,7 @@ php_fpm_service:
         user = www-data
         group = www-data
 
-        listen = /run/php/php7.0-fpm.sock
+        listen = /run/php/php{{ php_version }}-fpm.sock
         listen.owner = www-data
         listen.group = www-data
 
