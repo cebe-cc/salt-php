@@ -8,6 +8,9 @@ apt_https:
 
 {% endif %}
 
+gnupg2:
+  pkg.installed
+
 {% if pillar.php.version is defined %}
 {% set php_version=pillar.php.version %}
 {% elif grains['oscodename'] == 'bullseye' %}
@@ -28,10 +31,11 @@ php_repository:
     - dist: {{ grains['oscodename'] }}
     - key_url: https://packages.sury.org/php/apt.gpg
     - file: /etc/apt/sources.list.d/php.list
-{% if grains['oscodename'] == 'stretch' %}
     - require:
+{% if grains['oscodename'] == 'stretch' %}
         -   pkg: apt_https
 {% endif %}
+        - pkg: gnupg2
 
 php_fpm_packages:
   pkg.installed:
