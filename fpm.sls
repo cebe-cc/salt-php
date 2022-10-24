@@ -77,7 +77,7 @@ php_fpm_service:
 /etc/php/{{ php_version }}/fpm/conf.d/50-custom.ini:
   file.managed:
     - contents: |
-        error_reporting=-1
+        error_reporting=E_ALL & ~E_DEPRECATED
         log_errors=On
         display_errors=Off
         display_startup_errors=Off
