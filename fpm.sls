@@ -46,7 +46,9 @@ php_fpm_packages:
       - php{{ php_version }}-curl
       - php{{ php_version }}-gd
       - php{{ php_version }}-intl
+{% if php_version != '8.1' %}
       - php{{ php_version }}-json
+{% endif %}
       - php{{ php_version }}-mbstring
       - php{{ php_version }}-opcache
       - php{{ php_version }}-readline
