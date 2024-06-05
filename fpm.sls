@@ -163,3 +163,8 @@ php_fpm_service:
     - mode: 0755
     - user: www-data
 
+php_update_alternative:
+  cmd.run:
+    - name: update-alternatives --set php /usr/bin/php{{ php_version }}
+    - unless: update-alternatives --display php | grep 'link currently points to' | grep php{{ php_version }}
+
