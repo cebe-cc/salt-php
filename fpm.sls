@@ -9,7 +9,9 @@ apt_https:
 {% endif %}
 
 {% if pillar.php.version is defined %}
-{% set php_version=pillar.php.version %}
+# normalize to string so version tests compare string-to-string
+# (unquoted YAML values such as 8.5 load as floats)
+{% set php_version=pillar.php.version|string %}
 {% elif grains['oscodename'] == 'bullseye' %}
 {% set php_version='7.4' %}
 {% elif grains['oscodename'] == 'buster' %}
