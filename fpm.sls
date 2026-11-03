@@ -31,7 +31,8 @@ gnupg2:
 # clobber the keyring mechanism already present on the server.
 debsuryorg_archive_keyring:
   pkg.installed:
-    - name: debsuryorg-archive-keyring
+    - sources:
+        - debsuryorg-archive-keyring: https://packages.sury.org/debsuryorg-archive-keyring.deb
 
 php_repository:
   pkgrepo.managed:
