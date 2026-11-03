@@ -8,6 +8,9 @@ apt_https:
 
 {% endif %}
 
+gnupg2:
+  pkg.installed
+
 {% if pillar.php.version is defined %}
 # normalize to string so version tests compare string-to-string
 # (unquoted YAML values such as 8.5 load as floats)
@@ -41,6 +44,7 @@ php_repository:
 {% if grains['oscodename'] == 'stretch' %}
         -   pkg: apt_https
 {% endif %}
+        - pkg: gnupg2
 
 php_fpm_packages:
   pkg.installed:
@@ -84,7 +88,7 @@ php_fpm_service:
 /etc/php/{{ php_version }}/fpm/conf.d/50-custom.ini:
   file.managed:
     - contents: |
-        error_reporting=-1
+        error_reporting=E_ALL & ~E_DEPRECATED
         log_errors=On
         display_errors=Off
         display_startup_errors=Off
