@@ -26,7 +26,7 @@ gnupg2:
 {% endif %}
 
 # https://packages.sury.org/php/README.txt
-# Surly now ships a GPG keyring package; the source line uses signed-by
+# Sury now ships a GPG keyring package; the source line uses signed-by
 # instead of the old apt-key/key_url approach so repeated applies do not
 # clobber the keyring mechanism already present on the server.
 debsuryorg_archive_keyring:
