@@ -12,7 +12,9 @@ gnupg2:
   pkg.installed
 
 {% if pillar.php.version is defined %}
-{% set php_version=pillar.php.version %}
+# normalize to string so version tests compare string-to-string
+# (unquoted YAML values such as 8.5 load as floats)
+{% set php_version=pillar.php.version|string %}
 {% elif grains['oscodename'] == 'bullseye' %}
 {% set php_version='7.4' %}
 {% elif grains['oscodename'] == 'buster' %}
@@ -24,14 +26,22 @@ gnupg2:
 {% endif %}
 
 # https://packages.sury.org/php/README.txt
+# Sury now ships a GPG keyring package; the source line uses signed-by
+# instead of the old apt-key/key_url approach so repeated applies do not
+# clobber the keyring mechanism already present on the server.
+debsuryorg_archive_keyring:
+  pkg.installed:
+    - sources:
+        - debsuryorg-archive-keyring: https://packages.sury.org/debsuryorg-archive-keyring.deb
+
 php_repository:
   pkgrepo.managed:
     - humanname: PHP Debian Repository packages.sury.org
-    - name: deb https://packages.sury.org/php {{ grains['oscodename'] }} main
+    - name: deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php {{ grains['oscodename'] }} main
     - dist: {{ grains['oscodename'] }}
-    - key_url: https://packages.sury.org/php/apt.gpg
     - file: /etc/apt/sources.list.d/php.list
     - require:
+        - pkg: debsuryorg_archive_keyring
 {% if grains['oscodename'] == 'stretch' %}
         -   pkg: apt_https
 {% endif %}
@@ -46,11 +56,13 @@ php_fpm_packages:
       - php{{ php_version }}-curl
       - php{{ php_version }}-gd
       - php{{ php_version }}-intl
-{% if php_version != '8.1' %}
+{% if php_version < '8.0' %}
       - php{{ php_version }}-json
 {% endif %}
       - php{{ php_version }}-mbstring
+{% if php_version < '8.5' %}
       - php{{ php_version }}-opcache
+{% endif %}
       - php{{ php_version }}-readline
       - php{{ php_version }}-xml
       - php{{ php_version }}-zip
@@ -163,8 +175,13 @@ php_fpm_service:
     - mode: 0755
     - user: www-data
 
+# Pinned so the queue service (ExecStart=/usr/bin/php ...) resolves to the
+# installed PHP version rather than relying on auto mode. Adopted from
+# upstream in isolation; ordered to run only after the packages exist.
 php_update_alternative:
   cmd.run:
     - name: update-alternatives --set php /usr/bin/php{{ php_version }}
     - unless: update-alternatives --display php | grep 'link currently points to' | grep php{{ php_version }}
+    - require:
+        - pkg: php_fpm_packages
 
